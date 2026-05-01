@@ -32,7 +32,7 @@ const connectDB = async () => {
     console.log('✅ MongoDB Connected Successfully');
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
-    process.exit(1);
+    console.log('⚠️ Server will remain running, but database operations will fail.');
   }
 };
 
@@ -92,4 +92,4 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));

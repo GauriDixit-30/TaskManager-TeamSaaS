@@ -19,7 +19,7 @@ COPY frontend ./frontend
 RUN cd frontend && npm run build
 
 # Expose port (Railway provides PORT environment variable)
-EXPOSE 4028
+EXPOSE 5000
 
 # Set production environment
 ENV NODE_ENV=production

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const projectRoutes = require('./routes/projects');
@@ -19,13 +19,9 @@ const connectDB = async () => {
   try {
     let uri = process.env.DB_URI;
     
-    // If we are using the default local URI, try to use an in-memory DB to ensure it works
-    // out-of-the-box for the user without requiring a local MongoDB installation.
-    if (!uri || uri === 'mongodb://localhost:27017/taskmanager') {
-      console.log('Starting in-memory MongoDB server for seamless local testing...');
-      const mongoServer = await MongoMemoryServer.create();
-      uri = mongoServer.getUri();
-      console.log(`In-memory MongoDB started at: ${uri}`);
+    if (!uri) {
+        console.error('❌ DB_URI environment variable is missing!');
+        process.exit(1);
     }
 
     await mongoose.connect(uri);

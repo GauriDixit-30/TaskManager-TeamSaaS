@@ -86,5 +86,22 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));
+// Ultimate fallback multi-port binding to guarantee Railway proxy connects
+const portsToTry = [process.env.PORT, 5000, 4028, 3000, 8080];
+const boundPorts = new Set();
+
+portsToTry.forEach(p => {
+    if (p && !boundPorts.has(p.toString())) {
+        boundPorts.add(p.toString());
+        const server = app.listen(p, '0.0.0.0', () => {
+            console.log(`🚀 Server officially running on port ${p}`);
+        });
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.log(`⚠️ Port ${p} is in use, skipping...`);
+            } else {
+                console.log(`⚠️ Error on port ${p}: ${err.message}`);
+            }
+        });
+    }
+});

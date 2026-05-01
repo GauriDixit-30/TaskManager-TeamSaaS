@@ -43,6 +43,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 
+const path = require('path');
+
 // Dashboard Dashboard (Tasks assigned to user, Overdue tasks, Task status distribution)
 app.get('/api/dashboard', require('./middleware/auth').protect, async (req, res) => {
     try {
@@ -80,6 +82,13 @@ app.get('/api/dashboard', require('./middleware/auth').protect, async (req, res)
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+});
+
+// Serve frontend
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
